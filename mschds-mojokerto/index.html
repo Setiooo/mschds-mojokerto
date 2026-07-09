@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mojokerto Smart Crowd & Human Development System</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="js/tailwind-config.js"></script>
+
+  <!-- Leaflet.js untuk Peta Interaktif -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  
+  <!-- Chart.js untuk Tren Analitik -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- HLS.js untuk pemutaran Live Stream CCTV Mojokerto (M3U8) -->
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="bg-darkbg text-gray-100 font-sans antialiased overflow-x-hidden">
+
+  <!-- KONTAINER APLIKASI -->
+  <div class="min-h-screen flex flex-col">
+    <!-- NAVBAR -->
+    <nav class="bg-darkbg/90 backdrop-blur-md border-b border-gray-800 sticky top-0 z-[60]">
+      <div class="max-w-7xl mx-auto px-4 lg:px-8 h-14 flex items-center justify-between gap-4">
+        <a href="#top" class="flex items-center gap-2">
+          <div class="p-1.5 bg-brand-900/50 border border-brand-500/30 rounded-lg text-brand-500"><i data-lucide="shield-alert" class="w-5 h-5"></i></div>
+          <span class="font-extrabold text-white tracking-tight">MSCHDS</span>
+        </a>
+        <div class="hidden md:flex items-center gap-6 text-sm text-gray-400">
+          <a href="#top" class="hover:text-white transition">Beranda</a>
+          <a href="#cctv" class="hover:text-white transition">CCTV Live</a>
+          <a href="#ai-live" class="hover:text-white transition">AI Live</a>
+          <a href="#dashboard" class="hover:text-white transition">Dashboard</a>
+          <a href="#fitur" class="hover:text-white transition">Fitur</a>
+          <a href="#tentang" class="hover:text-white transition">Tentang</a>
+          <a href="#kontak" class="hover:text-white transition">Kontak</a>
+        </div>
+        <a href="https://dishubcctv.mojokertokab.go.id/" target="_blank" rel="noopener" class="bg-brand-500 hover:bg-brand-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition flex items-center gap-1.5"><i data-lucide="cctv" class="w-4 h-4"></i> CCTV Live</a>
+      </div>
+    </nav>
+
+    <!-- HERO -->
+    <section id="top" class="relative overflow-hidden border-b border-gray-800">
+      <div class="absolute inset-0 bg-gradient-to-br from-brand-900/30 via-darkbg to-darkbg"></div>
+      <div class="relative max-w-7xl mx-auto px-4 lg:px-8 py-16 lg:py-24 flex flex-col items-start gap-6">
+        <span class="inline-flex items-center gap-2 text-xs font-semibold text-brand-400 bg-brand-500/10 border border-brand-500/20 px-3 py-1 rounded-full"><span class="w-1.5 h-1.5 rounded-full bg-brand-500 animate-pulse"></span> Sistem Pemantauan Kota Cerdas</span>
+        <h1 class="text-4xl lg:text-6xl font-extrabold tracking-tight text-white max-w-3xl leading-tight">Pantau Keramaian &amp; CCTV Kota Mojokerto <span class="text-brand-500">secara Real-time</span></h1>
+        <p class="text-gray-400 max-w-2xl text-base lg:text-lg leading-relaxed">MSCHDS mengintegrasikan CCTV lalu lintas resmi, analitik kepadatan berbasis AI, peta spasial, dan sistem pendukung keputusan (DSS) untuk membantu pengambilan kebijakan lintas dinas secara cepat dan berbasis data.</p>
+        <div class="flex flex-wrap gap-3">
+          <a href="#dashboard" class="bg-brand-500 hover:bg-brand-600 text-white font-bold px-5 py-2.5 rounded-lg transition flex items-center gap-2"><i data-lucide="layout-dashboard" class="w-4 h-4"></i> Lihat Dashboard</a>
+          <a href="#cctv" class="bg-gray-900 hover:bg-gray-800 border border-gray-700 text-white font-bold px-5 py-2.5 rounded-lg transition flex items-center gap-2"><i data-lucide="cctv" class="w-4 h-4"></i> CCTV Live</a>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 w-full max-w-3xl mt-6">
+          <div class="bg-cardbg/70 border border-gray-800 rounded-xl p-4"><div class="text-2xl font-extrabold text-white">4+</div><div class="text-[11px] text-gray-400 mt-1">Titik CCTV Terpantau</div></div>
+          <div class="bg-cardbg/70 border border-gray-800 rounded-xl p-4"><div class="text-2xl font-extrabold text-white">24 Jam</div><div class="text-[11px] text-gray-400 mt-1">Live Streaming</div></div>
+          <div class="bg-cardbg/70 border border-gray-800 rounded-xl p-4"><div class="text-2xl font-extrabold text-white">6 OPD</div><div class="text-[11px] text-gray-400 mt-1">Dinas Terhubung</div></div>
+          <div class="bg-cardbg/70 border border-gray-800 rounded-xl p-4"><div class="text-2xl font-extrabold text-white">AI</div><div class="text-[11px] text-gray-400 mt-1">Analitik YOLOv8</div></div>
+        </div>
+      </div>
+    </section>
+
+    
+    <!-- AI LIVE: ANALISIS FENOMENA VIA WEBCAM -->
+    <section id="ai-live" class="border-b border-gray-800 bg-cardbg/20" style="scroll-margin-top:3.5rem;">
+      <div class="max-w-7xl mx-auto px-4 lg:px-8 py-16">
+        <div class="flex items-center gap-2">
+          <i data-lucide="scan-eye" class="w-6 h-6 text-brand-500"></i>
+          <h2 class="text-2xl lg:text-3xl font-extrabold text-white">Analisis AI Fenomena (Live)</h2>
+        </div>
+        <p class="text-gray-400 mt-2 max-w-3xl">Webcam sebagai pengganti umpan CCTV. Setiap beberapa detik, satu frame dikirim ke Google Gemini untuk mendeskripsikan fenomena yang terjadi (keramaian, kepadatan, antrean, anomali). Kunci API disimpan hanya di browser Anda.</p>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-8">
+          <!-- Kolom kamera + hasil -->
+          <div class="lg:col-span-2 bg-cardbg border border-gray-800 rounded-xl p-4 flex flex-col gap-3">
+            <div class="relative bg-black rounded-lg overflow-hidden border border-gray-800" style="aspect-ratio:16/9;">
+              <video id="aiWebcam" autoplay playsinline muted class="absolute inset-0 w-full h-full object-cover"></video>
+              <div id="aiBadge" class="absolute top-2 left-2 hidden items-center gap-1 bg-red-600/90 text-white text-[10px] font-bold px-2 py-1 rounded z-10"><span class="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span> ANALISIS AKTIF</div>
+              <canvas id="aiCanvas" class="hidden"></canvas>
+            </div>
+            <div class="flex flex-wrap gap-2 items-center">
+              <button id="btnAiStart" onclick="startWebcam()" class="bg-brand-500 hover:bg-brand-600 text-white text-xs font-bold px-3 py-1.5 rounded flex items-center gap-1.5"><i data-lucide="video" class="w-4 h-4"></i> Nyalakan Webcam</button>
+              <button id="btnAiStop" onclick="stopWebcam()" class="bg-gray-800 hover:bg-gray-700 text-gray-200 text-xs font-bold px-3 py-1.5 rounded flex items-center gap-1.5"><i data-lucide="video-off" class="w-4 h-4"></i> Matikan</button>
+              <button id="btnAiToggle" onclick="toggleAnalysis()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-3 py-1.5 rounded flex items-center gap-1.5"><i data-lucide="scan-eye" class="w-4 h-4"></i> Mulai Analisis</button>
+              <span id="aiStatus" class="text-[11px] text-gray-500 self-center">Status: idle</span>
+            </div>
+            <div class="bg-gray-950 border border-gray-800 rounded-lg p-3">
+              <div class="text-[10px] uppercase tracking-wide text-gray-500 mb-1">Fenomena terkini</div>
+              <p id="aiLatest" class="text-sm text-gray-200 leading-relaxed">Belum ada analisis. Nyalakan webcam lalu klik “Mulai Analisis”.</p>
+            </div>
+          </div>
+
+          <!-- Kolom pengaturan + riwayat -->
+          <div class="flex flex-col gap-4">
+            <div class="bg-cardbg border border-gray-800 rounded-xl p-4 flex flex-col gap-2">
+              <h3 class="font-bold text-white text-sm flex items-center gap-2"><i data-lucide="settings" class="w-4 h-4 text-brand-500"></i> Pengaturan AI</h3>
+              <label class="text-[11px] text-gray-400 mt-1">Gemini API Key <span class="text-gray-600">(disimpan di browser)</span></label>
+              <input id="aiKey" type="password" placeholder="Tempel API key di sini" class="bg-gray-950 border border-gray-800 rounded px-2 py-1.5 text-xs text-gray-200 focus:outline-none focus:border-brand-500">
+              <label class="text-[11px] text-gray-400 mt-1">Model</label>
+              <select id="aiModel" class="bg-gray-950 border border-gray-800 rounded px-2 py-1.5 text-xs text-gray-200">
+                <option value="gemini-1.5-flash">gemini-1.5-flash (cepat &amp; murah)</option>
+                <option value="gemini-1.5-pro">gemini-1.5-pro (lebih pintar)</option>
+                <option value="gemini-2.0-flash">gemini-2.0-flash</option>
+              </select>
+              <label class="text-[11px] text-gray-400 mt-1">Interval analisis (detik)</label>
+              <input id="aiInterval" type="number" min="3" value="6" class="bg-gray-950 border border-gray-800 rounded px-2 py-1.5 text-xs text-gray-200">
+              <label class="text-[11px] text-gray-400 mt-1">Instruksi (prompt)</label>
+              <textarea id="aiPrompt" rows="3" class="bg-gray-950 border border-gray-800 rounded px-2 py-1.5 text-xs text-gray-200"></textarea>
+              <button onclick="saveAiSettings()" class="mt-1 bg-brand-500 hover:bg-brand-600 text-white text-xs font-bold px-3 py-1.5 rounded">Simpan Pengaturan</button>
+            </div>
+            <div class="bg-cardbg border border-gray-800 rounded-xl p-4 flex-grow">
+              <h3 class="font-bold text-white text-sm flex items-center gap-2 mb-2"><i data-lucide="list" class="w-4 h-4 text-brand-500"></i> Riwayat Fenomena</h3>
+              <div id="aiLog" class="flex flex-col gap-2 text-xs text-gray-300 max-h-64 overflow-y-auto"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- HEADER -->
+    <header id="kontrol" class="bg-cardbg/80 backdrop-blur-md border-b border-gray-800 relative z-30 px-4 py-3 lg:px-8">
+      <div class="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        
+        <!-- Judul & Logo -->
+        <div class="flex items-center gap-3">
+          <div class="p-2 bg-brand-900/50 border border-brand-500/30 rounded-lg text-brand-500">
+            <i data-lucide="shield-alert" class="w-8 h-8"></i>
+          </div>
+          <div>
+            <h1 class="text-xl font-extrabold tracking-tight text-white flex items-center gap-2">
+              MSCHDS <span class="text-xs bg-brand-500/10 text-brand-500 border border-brand-500/20 px-2 py-0.5 rounded">PORTAL TERINTEGRASI</span>
+            </h1>
+            <p class="text-xs text-gray-400">Mojokerto Smart Crowd & Human Development System · <span id="liveClock" class="text-brand-400 font-mono font-semibold">--:--:--</span> WIB</p>
+          </div>
+        </div>
+
+        <!-- Simulator Kontrol & Indikator Global -->
+        <div class="flex flex-wrap items-center gap-3 text-sm">
+          <!-- Seleksi Waktu Simulasi -->
+          <div class="bg-gray-900/80 px-3 py-1.5 rounded-lg border border-gray-800 flex items-center gap-2">
+            <span class="text-xs text-gray-400">Waktu:</span>
+            <select id="timeOfDaySelect" onchange="changeTimeOfDay(this.value)" class="bg-transparent text-white font-semibold focus:outline-none cursor-pointer">
+              <option value="pagi" class="bg-darkbg text-gray-100">Pagi Hari (07:00)</option>
+              <option value="siang" class="bg-darkbg text-gray-100">Siang Hari (12:00)</option>
+              <option value="sore" class="bg-darkbg text-gray-100">Sore Hari (16:30)</option>
+              <option value="malam" selected class="bg-darkbg text-gray-100">Malam Hari (20:00)</option>
+            </select>
+          </div>
+
+          <!-- Tombol Kejadian Spontan -->
+          <button onclick="triggerMassGathering()" class="bg-rose-600/20 hover:bg-rose-600/30 text-rose-400 border border-rose-500/30 px-3 py-1.5 rounded-lg font-medium transition flex items-center gap-1.5">
+            <i data-lucide="zap" class="w-4 h-4"></i>
+            Simulasi Massa Dadakan
+          </button>
+        </div>
+
+      </div>
+    </header>
+
+    <!-- BADAN UTAMA -->
+    <main id="dashboard" style="scroll-margin-top:3.5rem;" class="flex-grow max-w-7xl w-full mx-auto p-4 lg:p-8 grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+      <!-- KOLOM KIRI: STATISTIK, PETA, DAN LOG DATABASES (7 COLS) -->
+      <section class="lg:col-span-7 flex flex-col gap-6">
+        
+        <!-- BARIS 1: EXECUTIVE STATS -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <!-- Stat 1 -->
+          <div class="bg-cardbg border border-gray-800 p-4 rounded-xl flex flex-col justify-between">
+            <div class="flex items-center justify-between text-gray-400 mb-2">
+              <span class="text-xs font-semibold tracking-wider uppercase text-[10px]">Orang Terpantau</span>
+              <i data-lucide="users" class="w-4 h-4 text-cyan-400"></i>
+            </div>
+            <div>
+              <div id="statTotalPeople" class="text-2xl font-bold text-white">412</div>
+              <p class="text-[10px] text-emerald-400 flex items-center gap-1 mt-1">
+                <i data-lucide="trending-up" class="w-3 h-3"></i> +12%
+              </p>
+            </div>
+          </div>
+          <!-- Stat 2 -->
+          <div class="bg-cardbg border border-gray-800 p-4 rounded-xl flex flex-col justify-between">
+            <div class="flex items-center justify-between text-gray-400 mb-2">
+              <span class="text-xs font-semibold tracking-wider uppercase text-[10px]">CCTV Terkoneksi</span>
+              <i data-lucide="video" class="w-4 h-4 text-emerald-400"></i>
+            </div>
+            <div>
+              <div id="statActiveCameras" class="text-2xl font-bold text-white">4/4</div>
+              <p class="text-[10px] text-gray-400 mt-1">Integrasi Diskominfo</p>
+            </div>
+          </div>
+          <!-- Stat 3 -->
+          <div class="bg-cardbg border border-gray-800 p-4 rounded-xl flex flex-col justify-between">
+            <div class="flex items-center justify-between text-gray-400 mb-2">
+              <span class="text-xs font-semibold tracking-wider uppercase text-[10px]">Rekomendasi DSS</span>
+              <i data-lucide="brain-circuit" class="w-4 h-4 text-purple-400"></i>
+            </div>
+            <div>
+              <div id="statActivePolicies" class="text-2xl font-bold text-white">3</div>
+              <p id="statActivePoliciesSubtitle" class="text-[10px] text-amber-400 mt-1">1 Butuh Disposisi</p>
+            </div>
+          </div>
+          <!-- Stat 4 -->
+          <div class="bg-cardbg border border-gray-800 p-4 rounded-xl flex flex-col justify-between">
+            <div class="flex items-center justify-between text-gray-400 mb-2">
+              <span class="text-xs font-semibold tracking-wider uppercase text-[10px]">Aksi Terkirim</span>
+              <i data-lucide="clipboard-check" class="w-4 h-4 text-amber-400"></i>
+            </div>
+            <div>
+              <div id="statDispatchedActions" class="text-2xl font-bold text-white">12</div>
+              <p class="text-[10px] text-emerald-400 mt-1">Efektivitas Pelayanan</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- BARIS 2: PETA LOKASI INTERAKTIF -->
+        <div class="bg-cardbg border border-gray-800 rounded-xl p-4 flex flex-col gap-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <i data-lucide="map" class="w-5 h-5 text-brand-500"></i>
+              <h2 class="font-bold text-white">Peta Keramaian Spasial Kota Mojokerto</h2>
+            </div>
+            <div class="flex items-center gap-2 text-xs">
+              <span class="text-gray-400">Overlay:</span>
+              <button onclick="toggleMapLayer('heat')" id="btnLayerHeat" class="px-2.5 py-1 rounded bg-brand-900/50 text-brand-400 border border-brand-500/30 font-medium">Heat Spot</button>
+              <button onclick="toggleMapLayer('umkm')" id="btnLayerUmkm" class="px-2.5 py-1 rounded bg-gray-800 text-gray-400 hover:text-gray-200 font-medium">UMKM Binaan</button>
+            </div>
+          </div>
+
+          <!-- Wadah Peta Leaflet -->
+          <div id="map" class="w-full h-[320px] rounded-lg border border-gray-800 z-10"></div>
+        </div>
+
+        <!-- BARIS 3: LOG ALIRAN DATA MASUK -->
+        <div class="bg-cardbg border border-gray-800 rounded-xl p-4 flex flex-col gap-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <i data-lucide="database" class="w-5 h-5 text-cyan-400"></i>
+              <h2 class="font-bold text-white text-sm sm:text-base">Log Metadata (<code class="text-cyan-400 text-xs">crowd_logs</code>)</h2>
+            </div>
+          </div>
+
+          <div class="overflow-x-auto border border-gray-800/80 rounded-lg">
+            <table class="min-w-full divide-y divide-gray-800 text-left text-xs">
+              <thead class="bg-gray-900/60 text-gray-400 uppercase tracking-wider text-[10px]">
+                <tr>
+                  <th class="px-3 py-2">Timestamp</th>
+                  <th class="px-3 py-2">ID</th>
+                  <th class="px-3 py-2">Lokasi</th>
+                  <th class="px-3 py-2 text-right">Orang</th>
+                  <th class="px-3 py-2 text-center">Densitas</th>
+                </tr>
+              </thead>
+              <tbody id="dbLogTableBody" class="divide-y divide-gray-800/50 font-mono text-gray-300">
+                <!-- Injeksi Dinamis via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- KOLOM KANAN: VIDEO LIVE FEED & ENGINE DSS (5 COLS) -->
+      <section class="lg:col-span-5 flex flex-col gap-6">
+
+        <!-- KARTU 0: CCTV LIVE RESMI (ATCS MOJOKERTO) -->
+        <div id="cctv" style="scroll-margin-top:3.5rem;" class="bg-cardbg border border-gray-800 rounded-xl p-4 flex flex-col gap-3">
+          <div class="flex items-center justify-between border-b border-gray-800 pb-2">
+            <div class="flex items-center gap-2">
+              <i data-lucide="cctv" class="w-5 h-5 text-brand-500"></i>
+              <h2 class="font-bold text-white text-sm sm:text-base">CCTV Live Resmi — ATCS Mojokerto</h2>
+            </div>
+            <span class="flex items-center gap-1 text-[10px] text-emerald-400 font-bold"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span> LIVE 24 JAM</span>
+          </div>
+          <div class="relative bg-black rounded-lg overflow-hidden border border-gray-800" style="height:320px;">
+            <iframe src="https://dishubcctv.mojokertokab.go.id/" class="absolute inset-0 w-full h-full" style="border:0;" loading="lazy" referrerpolicy="no-referrer" allow="fullscreen"></iframe>
+          </div>
+          <div class="bg-gray-950 border border-gray-800/80 rounded-lg p-2.5 flex items-center justify-between gap-2">
+            <p class="text-[10px] text-gray-400 leading-snug"><span class="text-amber-400 font-semibold">Layar kosong?</span> Portal resmi kadang memblokir penyematan demi keamanan — buka langsung di tab baru.</p>
+            <a href="https://dishubcctv.mojokertokab.go.id/" target="_blank" rel="noopener" class="shrink-0 bg-brand-500 hover:bg-brand-600 text-white text-[11px] font-bold px-3 py-1.5 rounded transition flex items-center gap-1.5"><i data-lucide="external-link" class="w-3.5 h-3.5"></i> Buka Portal</a>
+          </div>
+        </div>
+
+        <!-- KARTU 1: ENGINE ANALISIS CCTV & INTELLIGENCE LIVE (DEMO/ANALITIK) -->
+        <div class="bg-cardbg border border-gray-800 rounded-xl p-4 flex flex-col gap-3">
+          
+          <div class="flex items-center justify-between border-b border-gray-800 pb-2">
+            <div class="flex gap-2">
+              <button id="btnModeSimulasi" onclick="setFeedMode('simulasi')" class="px-3 py-1.5 rounded-t text-xs font-medium transition duration-150 text-gray-400 hover:text-white">
+                AI Canvas Mode
+              </button>
+              <button id="btnModeAsli" onclick="setFeedMode('asli')" class="px-3 py-1.5 rounded-t text-xs font-bold transition duration-150 border-b-2 border-brand-500 text-white">
+                Live Video Feed
+              </button>
+            </div>
+            <div class="bg-gray-900 text-gray-300 text-xs px-2.5 py-1 rounded border border-gray-800">
+              ID: <span id="currentCamId" class="font-mono text-brand-400 font-bold">CAM-01</span>
+            </div>
+          </div>
+
+          <!-- Video Stream Canvas & Overlays HUD -->
+          <div class="relative bg-black rounded-lg aspect-video overflow-hidden border border-gray-800 flex items-center justify-center">
+            
+            <!-- Video Elemen Tersembunyi (Tanpa Crossorigin untuk menghindari CORS) -->
+            <video id="realCctvVideo" playsinline muted loop class="hidden"></video>
+            
+            <!-- Canvas Utama Render Deteksi AI -->
+            <canvas id="cvCanvas" class="absolute inset-0 w-full h-full object-cover z-10"></canvas>
+            
+            <!-- OVERLAY INTERAKTIF UNTUK PERIZINAN AUTOPLAY DI PONSEL -->
+            <div id="videoTapOverlay" onclick="forcePlayCctv()" class="absolute inset-0 bg-black/80 backdrop-blur-sm z-30 flex flex-col items-center justify-center p-4 text-center cursor-pointer hover:bg-black/75 transition-all">
+              <div class="w-14 h-14 bg-brand-500/20 text-brand-500 border border-brand-500/30 rounded-full flex items-center justify-center mb-3 animate-bounce">
+                <i data-lucide="play" class="w-7 h-7 fill-current"></i>
+              </div>
+              <span class="text-sm font-bold text-white">KETUK UNTUK AKTIFKAN LIVE FEED</span>
+              <span class="text-xs text-gray-400 mt-1">Mengaktifkan pemutaran video asli di browser seluler</span>
+            </div>
+            
+            <!-- AI Analytics Overlay HUD -->
+            <div class="absolute top-2 left-2 bg-black/75 backdrop-blur-sm border border-gray-800 text-[10px] p-2 rounded text-white font-mono flex flex-col gap-1 z-20">
+              <div class="flex items-center gap-1.5 text-brand-400 font-bold">
+                <span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping"></span>
+                <span id="hudFeedType">LIVE HD CCTV ANALYTICS</span>
+              </div>
+              <div>LOKASI: <span id="currentCamLocation" class="text-gray-300">Alun-Alun Mojokerto</span></div>
+              <div id="hudResolution">STREAM: 1080P@24FPS</div>
+              <div>MODEL: YOLOv8x-DeepCrowd</div>
+            </div>
+
+            <!-- ROI Bound Boundary Info -->
+            <div class="absolute bottom-2 right-2 bg-black/60 backdrop-blur-sm text-[9px] px-2 py-1 rounded text-gray-400 font-mono z-20">
+              Analisis Region: AKTIF (100%)
+            </div>
+
+            <div class="absolute bottom-2 left-2 bg-amber-500/15 border border-amber-500/40 text-amber-300 text-[9px] font-bold px-2 py-1 rounded z-20 flex items-center gap-1">
+              <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span> MODE PRATINJAU / DEMO
+            </div>
+          </div>
+
+          <!-- Input Tautan M3U8/MP4 -->
+          <div id="customUrlContainer" class="bg-gray-950 p-2.5 rounded-lg border border-gray-800/80 flex flex-col gap-2">
+            <span class="text-[10px] text-gray-400 font-bold flex items-center gap-1">
+              <i data-lucide="link" class="w-3 h-3 text-brand-400"></i> Integrasi Sumber CCTV Mojokerto:
+            </span>
+            <div class="flex gap-2">
+              <input type="text" id="streamUrlInput" placeholder="URL Video MP4 atau M3U8..." class="flex-grow bg-gray-900 border border-gray-800 text-xs text-white rounded px-2.5 py-1.5 focus:outline-none focus:border-brand-500 font-mono font-bold">
+              <button onclick="loadCustomStream()" class="bg-brand-500 hover:bg-brand-600 text-white text-[11px] font-bold px-3 py-1.5 rounded transition">Hubungkan</button>
+            </div>
+            <div class="flex flex-wrap gap-1.5 pt-2 mt-1 border-t border-gray-800/60">
+              <span class="text-[9px] text-gray-500 w-full mb-0.5 flex items-center gap-1"><i data-lucide="radio-tower" class="w-3 h-3 text-emerald-400"></i> Portal CCTV lalu lintas resmi (live 24 jam):</span>
+              <a href="https://dishubcctv.mojokertokab.go.id/" target="_blank" rel="noopener" class="flex items-center gap-1 bg-gray-900 hover:bg-brand-900/40 border border-gray-800 hover:border-brand-500/40 text-gray-300 hover:text-brand-300 text-[10px] font-semibold px-2.5 py-1 rounded transition"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> ATCS Dishub</a>
+              <a href="https://play.google.com/store/apps/details?id=com.cvmalala.dishubkotamojokerto.simanjakerto" target="_blank" rel="noopener" class="flex items-center gap-1 bg-gray-900 hover:bg-brand-900/40 border border-gray-800 hover:border-brand-500/40 text-gray-300 hover:text-brand-300 text-[10px] font-semibold px-2.5 py-1 rounded transition"><i data-lucide="smartphone" class="w-3 h-3"></i> SIMANJAKERTO</a>
+              <a href="https://mojokertokota.go.id/" target="_blank" rel="noopener" class="flex items-center gap-1 bg-gray-900 hover:bg-brand-900/40 border border-gray-800 hover:border-brand-500/40 text-gray-300 hover:text-brand-300 text-[10px] font-semibold px-2.5 py-1 rounded transition"><i data-lucide="globe" class="w-3 h-3"></i> Portal Pemkot</a>
+            </div>
+          </div>
+
+          <!-- Tombol Pergantian Kamera -->
+          <div class="grid grid-cols-4 gap-2">
+            <button onclick="switchCamera('CAM-01')" id="btnCam_CAM-01" class="py-1.5 text-xs rounded transition font-medium border border-brand-500/30 bg-brand-900/40 text-brand-400">Alun-Alun</button>
+            <button onclick="switchCamera('CAM-02')" id="btnCam_CAM-02" class="py-1.5 text-xs rounded transition font-medium border border-gray-800 bg-gray-950 text-gray-400 hover:text-white">Benpas</button>
+            <button onclick="switchCamera('CAM-03')" id="btnCam_CAM-03" class="py-1.5 text-xs rounded transition font-medium border border-gray-800 bg-gray-950 text-gray-400 hover:text-white">Gedangan</button>
+            <button onclick="switchCamera('CAM-04')" id="btnCam_CAM-04" class="py-1.5 text-xs rounded transition font-medium border border-gray-800 bg-gray-950 text-gray-400 hover:text-white">Jl. GadjahM.</button>
+          </div>
+        </div>
+
+        <!-- KARTU 2: REAL-TIME DECISION SUPPORT SYSTEM (DSS) & INTERVENSI -->
+        <div class="bg-cardbg border border-gray-800 rounded-xl p-4 flex flex-col gap-3">
+          
+          <div class="flex flex-col gap-2">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <i data-lucide="brain-circuit" class="w-5 h-5 text-purple-400"></i>
+                <h2 class="font-bold text-white text-sm sm:text-base">Rekomendasi Kebijakan AI-DSS</h2>
+              </div>
+            </div>
+            
+            <!-- Filter OPD -->
+            <div class="grid grid-cols-4 gap-1 bg-gray-900/80 p-1 rounded-lg border border-gray-800 text-center text-xs">
+              <button onclick="setOPDFilter('ALL')" id="opdFilter_ALL" class="py-1 rounded font-medium transition bg-gray-800 text-white">Semua</button>
+              <button onclick="setOPDFilter('DISNAKER')" id="opdFilter_DISNAKER" class="py-1 rounded font-medium transition text-gray-400 hover:text-white">Disnaker</button>
+              <button onclick="setOPDFilter('DISKOPUKM')" id="opdFilter_DISKOPUKM" class="py-1 rounded font-medium transition text-gray-400 hover:text-white">UMKM</button>
+              <button onclick="setOPDFilter('SATPOLPP')" id="opdFilter_SATPOLPP" class="py-1 rounded font-medium transition text-gray-400 hover:text-white">Kamtibmas</button>
+            </div>
+          </div>
+
+          <!-- Wadah List Rekomendasi DSS -->
+          <div id="dssContainer" class="flex flex-col gap-3 min-h-[220px] max-h-[300px] overflow-y-auto pr-1">
+            <!-- Injeksi Kartu Rekomendasi Secara Dinamis -->
+          </div>
+
+          <!-- Ringkasan Log Disposisi -->
+          <div class="border-t border-gray-800 pt-3">
+            <button onclick="toggleHistoryModal()" class="w-full bg-gray-900/50 hover:bg-gray-900/90 text-gray-400 hover:text-white border border-gray-800 py-2 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition">
+              <i data-lucide="history" class="w-4 h-4"></i>
+              Lihat Riwayat Disposisi (<span id="dispatchHistoryCount">0</span>)
+            </button>
+          </div>
+
+        </div>
+
+        <!-- KARTU 3: GRAFIK ANALISA KORELASI EKONOMI DAN MANUSIA -->
+        <div class="bg-cardbg border border-gray-800 rounded-xl p-4 flex flex-col gap-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <i data-lucide="trending-up" class="w-5 h-5 text-emerald-500"></i>
+              <h2 class="font-bold text-white">Analisis Hubungan Kerumunan & UMKM</h2>
+            </div>
+          </div>
+          <div class="w-full h-[180px] relative">
+            <canvas id="trendChart"></canvas>
+          </div>
+        </div>
+
+      </section>
+
+    </main>
+
+    <!-- FITUR -->
+    <section id="fitur" class="border-b border-gray-800 bg-cardbg/20" style="scroll-margin-top:3.5rem;">
+      <div class="max-w-7xl mx-auto px-4 lg:px-8 py-16">
+        <h2 class="text-2xl lg:text-3xl font-extrabold text-white">Fitur Utama</h2>
+        <p class="text-gray-400 mt-2 max-w-2xl">Satu platform untuk memantau, menganalisis, dan menindaklanjuti dinamika ruang publik Kota Mojokerto.</p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+          <div class="bg-cardbg border border-gray-800 rounded-xl p-5 flex flex-col gap-3 hover:border-brand-500/40 transition">
+            <div class="w-10 h-10 rounded-lg bg-brand-900/40 border border-brand-500/20 text-brand-500 flex items-center justify-center"><i data-lucide="cctv" class="w-5 h-5"></i></div>
+            <h3 class="font-bold text-white">CCTV Live Terintegrasi</h3>
+            <p class="text-sm text-gray-400 leading-relaxed">Akses langsung siaran ATCS resmi Dishub Mojokerto 24 jam dalam satu tampilan.</p>
+          </div>
+          <div class="bg-cardbg border border-gray-800 rounded-xl p-5 flex flex-col gap-3 hover:border-brand-500/40 transition">
+            <div class="w-10 h-10 rounded-lg bg-brand-900/40 border border-brand-500/20 text-brand-500 flex items-center justify-center"><i data-lucide="cpu" class="w-5 h-5"></i></div>
+            <h3 class="font-bold text-white">Analitik Kepadatan AI</h3>
+            <p class="text-sm text-gray-400 leading-relaxed">Deteksi otomatis jumlah orang &amp; kendaraan di tiap titik menggunakan model YOLOv8.</p>
+          </div>
+          <div class="bg-cardbg border border-gray-800 rounded-xl p-5 flex flex-col gap-3 hover:border-brand-500/40 transition">
+            <div class="w-10 h-10 rounded-lg bg-brand-900/40 border border-brand-500/20 text-brand-500 flex items-center justify-center"><i data-lucide="map" class="w-5 h-5"></i></div>
+            <h3 class="font-bold text-white">Peta Spasial Interaktif</h3>
+            <p class="text-sm text-gray-400 leading-relaxed">Visualisasi heat-spot keramaian dan sebaran UMKM binaan pada peta kota.</p>
+          </div>
+          <div class="bg-cardbg border border-gray-800 rounded-xl p-5 flex flex-col gap-3 hover:border-brand-500/40 transition">
+            <div class="w-10 h-10 rounded-lg bg-brand-900/40 border border-brand-500/20 text-brand-500 flex items-center justify-center"><i data-lucide="brain-circuit" class="w-5 h-5"></i></div>
+            <h3 class="font-bold text-white">AI-DSS Rekomendasi</h3>
+            <p class="text-sm text-gray-400 leading-relaxed">Rekomendasi kebijakan otomatis per OPD lengkap dengan skor prioritas.</p>
+          </div>
+          <div class="bg-cardbg border border-gray-800 rounded-xl p-5 flex flex-col gap-3 hover:border-brand-500/40 transition">
+            <div class="w-10 h-10 rounded-lg bg-brand-900/40 border border-brand-500/20 text-brand-500 flex items-center justify-center"><i data-lucide="database" class="w-5 h-5"></i></div>
+            <h3 class="font-bold text-white">Log Metadata Real-time</h3>
+            <p class="text-sm text-gray-400 leading-relaxed">Aliran data kepadatan tercatat rapi dan mudah ditelusuri kembali.</p>
+          </div>
+          <div class="bg-cardbg border border-gray-800 rounded-xl p-5 flex flex-col gap-3 hover:border-brand-500/40 transition">
+            <div class="w-10 h-10 rounded-lg bg-brand-900/40 border border-brand-500/20 text-brand-500 flex items-center justify-center"><i data-lucide="line-chart" class="w-5 h-5"></i></div>
+            <h3 class="font-bold text-white">Analisis Korelasi Ekonomi</h3>
+            <p class="text-sm text-gray-400 leading-relaxed">Menghubungkan tingkat keramaian dengan estimasi omset UMKM lokal.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ALUR KERJA -->
+    <section id="alur" class="border-b border-gray-800" style="scroll-margin-top:3.5rem;">
+      <div class="max-w-7xl mx-auto px-4 lg:px-8 py-16">
+        <h2 class="text-2xl lg:text-3xl font-extrabold text-white">Alur Kerja Sistem</h2>
+        <p class="text-gray-400 mt-2 max-w-2xl">Dari tangkapan kamera hingga tindakan dinas, semua terhubung dalam satu alur.</p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
+          <div class="relative bg-cardbg border border-gray-800 rounded-xl p-5 flex flex-col gap-3">
+            <div class="flex items-center gap-3"><span class="text-3xl font-extrabold text-brand-500/30">1</span><div class="w-9 h-9 rounded-lg bg-brand-900/40 border border-brand-500/20 text-brand-500 flex items-center justify-center"><i data-lucide="camera" class="w-5 h-5"></i></div></div>
+            <h3 class="font-bold text-white">Tangkap</h3>
+            <p class="text-sm text-gray-400 leading-relaxed">Kamera CCTV kota menangkap kondisi lapangan secara langsung.</p>
+          </div>
+          <div class="relative bg-cardbg border border-gray-800 rounded-xl p-5 flex flex-col gap-3">
+            <div class="flex items-center gap-3"><span class="text-3xl font-extrabold text-brand-500/30">2</span><div class="w-9 h-9 rounded-lg bg-brand-900/40 border border-brand-500/20 text-brand-500 flex items-center justify-center"><i data-lucide="cpu" class="w-5 h-5"></i></div></div>
+            <h3 class="font-bold text-white">Analisis</h3>
+            <p class="text-sm text-gray-400 leading-relaxed">AI menghitung kepadatan orang/kendaraan dan mendeteksi anomali.</p>
+          </div>
+          <div class="relative bg-cardbg border border-gray-800 rounded-xl p-5 flex flex-col gap-3">
+            <div class="flex items-center gap-3"><span class="text-3xl font-extrabold text-brand-500/30">3</span><div class="w-9 h-9 rounded-lg bg-brand-900/40 border border-brand-500/20 text-brand-500 flex items-center justify-center"><i data-lucide="brain-circuit" class="w-5 h-5"></i></div></div>
+            <h3 class="font-bold text-white">Rekomendasi</h3>
+            <p class="text-sm text-gray-400 leading-relaxed">Sistem menyusun rekomendasi kebijakan berdasarkan tingkat prioritas.</p>
+          </div>
+          <div class="relative bg-cardbg border border-gray-800 rounded-xl p-5 flex flex-col gap-3">
+            <div class="flex items-center gap-3"><span class="text-3xl font-extrabold text-brand-500/30">4</span><div class="w-9 h-9 rounded-lg bg-brand-900/40 border border-brand-500/20 text-brand-500 flex items-center justify-center"><i data-lucide="send" class="w-5 h-5"></i></div></div>
+            <h3 class="font-bold text-white">Disposisi</h3>
+            <p class="text-sm text-gray-400 leading-relaxed">Keputusan didistribusikan ke OPD terkait untuk ditindaklanjuti.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TENTANG -->
+    <section id="tentang" class="border-b border-gray-800 bg-cardbg/20" style="scroll-margin-top:3.5rem;">
+      <div class="max-w-7xl mx-auto px-4 lg:px-8 py-16 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+        <div class="flex flex-col gap-4">
+          <h2 class="text-2xl lg:text-3xl font-extrabold text-white">Tentang MSCHDS</h2>
+          <p class="text-gray-400 leading-relaxed">Mojokerto Smart Crowd &amp; Human Development System (MSCHDS) adalah prototipe sistem pemantauan ruang publik yang menggabungkan CCTV resmi, kecerdasan buatan, dan sistem pendukung keputusan. Tujuannya membantu Pemerintah Kota Mojokerto merespons dinamika keramaian secara cepat, transparan, dan berbasis data.</p>
+          <p class="text-gray-400 leading-relaxed">Sistem ini dirancang untuk kolaborasi lintas OPD, sehingga setiap rekomendasi dapat langsung diteruskan ke dinas yang berwenang.</p>
+        </div>
+        <div class="bg-cardbg border border-gray-800 rounded-xl p-6">
+          <h3 class="font-bold text-white mb-4 flex items-center gap-2"><i data-lucide="building-2" class="w-5 h-5 text-brand-500"></i> Dinas &amp; Lembaga Terkait</h3>
+          <div class="grid grid-cols-2 gap-3 text-sm text-gray-300">
+            <span class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-brand-500"></span> Diskominfo</span>
+            <span class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-brand-500"></span> Bappedalitbang</span>
+            <span class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-brand-500"></span> Dinas Perhubungan</span>
+            <span class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-brand-500"></span> Satpol PP</span>
+            <span class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-brand-500"></span> Dinas Tenaga Kerja</span>
+            <span class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-brand-500"></span> Dinas Koperasi &amp; UMKM</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- KONTAK & AKSES -->
+    <section id="kontak" class="border-b border-gray-800" style="scroll-margin-top:3.5rem;">
+      <div class="max-w-7xl mx-auto px-4 lg:px-8 py-16">
+        <h2 class="text-2xl lg:text-3xl font-extrabold text-white">Akses &amp; Kontak</h2>
+        <p class="text-gray-400 mt-2 max-w-2xl">Akses layanan CCTV dan informasi resmi Pemerintah Kota &amp; Kabupaten Mojokerto.</p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+          <a href="https://dishubcctv.mojokertokab.go.id/" target="_blank" rel="noopener" class="bg-cardbg border border-gray-800 rounded-xl p-5 flex flex-col gap-3 hover:border-brand-500/40 transition">
+            <div class="w-10 h-10 rounded-lg bg-brand-900/40 border border-brand-500/20 text-brand-500 flex items-center justify-center"><i data-lucide="cctv" class="w-5 h-5"></i></div>
+            <h3 class="font-bold text-white">ATCS Dishub</h3>
+            <p class="text-sm text-gray-400">Live streaming CCTV lalu lintas 24 jam.</p>
+            <span class="text-xs text-brand-400 font-semibold flex items-center gap-1">Buka portal <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i></span>
+          </a>
+          <a href="https://play.google.com/store/apps/details?id=com.cvmalala.dishubkotamojokerto.simanjakerto" target="_blank" rel="noopener" class="bg-cardbg border border-gray-800 rounded-xl p-5 flex flex-col gap-3 hover:border-brand-500/40 transition">
+            <div class="w-10 h-10 rounded-lg bg-brand-900/40 border border-brand-500/20 text-brand-500 flex items-center justify-center"><i data-lucide="smartphone" class="w-5 h-5"></i></div>
+            <h3 class="font-bold text-white">SIMANJAKERTO</h3>
+            <p class="text-sm text-gray-400">Aplikasi CCTV &amp; info fasilitas Kota Mojokerto.</p>
+            <span class="text-xs text-brand-400 font-semibold flex items-center gap-1">Unduh aplikasi <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i></span>
+          </a>
+          <a href="https://mojokertokota.go.id/" target="_blank" rel="noopener" class="bg-cardbg border border-gray-800 rounded-xl p-5 flex flex-col gap-3 hover:border-brand-500/40 transition">
+            <div class="w-10 h-10 rounded-lg bg-brand-900/40 border border-brand-500/20 text-brand-500 flex items-center justify-center"><i data-lucide="globe" class="w-5 h-5"></i></div>
+            <h3 class="font-bold text-white">Portal Pemkot</h3>
+            <p class="text-sm text-gray-400">Situs resmi Pemerintah Kota Mojokerto.</p>
+            <span class="text-xs text-brand-400 font-semibold flex items-center gap-1">Kunjungi situs <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i></span>
+          </a>
+        </div>
+        <div class="mt-6 bg-cardbg border border-gray-800 rounded-xl p-5 flex items-start gap-3">
+          <i data-lucide="map-pin" class="w-5 h-5 text-brand-500 mt-0.5"></i>
+          <div class="text-sm text-gray-400"><span class="text-white font-semibold">Pemerintah Kota Mojokerto</span><br>Jl. Gajah Mada No. 145, Kota Mojokerto, Jawa Timur</div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- FOOTER -->
+    <footer class="bg-gray-950 border-t border-gray-900 py-6 text-center text-xs text-gray-500">
+      <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
+        <p>© 2027 Pemkot Mojokerto · Bappedalitbang · Diskominfo</p>
+        <p class="text-[10px] text-gray-600 max-w-2xl leading-relaxed">Prototipe/demonstrasi sistem pemantauan. Umpan video pada panel analitik bersifat simulasi/pratinjau. Untuk CCTV lalu lintas live 24 jam, gunakan tombol portal resmi ATCS / SIMANJAKERTO.</p>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- MODAL: TOAST DISPOSISI BERHASIL -->
+  <div id="successModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div class="bg-cardbg border border-brand-500/30 rounded-xl p-6 max-w-md w-full shadow-2xl flex flex-col gap-4 text-center">
+      <div class="w-16 h-16 bg-brand-900/30 text-brand-500 border border-brand-500/20 rounded-full flex items-center justify-center mx-auto text-2xl">
+        <i data-lucide="send" class="w-8 h-8"></i>
+      </div>
+      <div>
+        <h3 class="text-lg font-bold text-white">Disposisi Kebijakan Berhasil!</h3>
+        <p class="text-xs text-gray-400 mt-1">Sistem secara otomatis mendokumentasikan keputusan dan mengirimkan notifikasi penugasan ke dinas terkait.</p>
+      </div>
+      
+      <!-- Detil Tiket Disposisi -->
+      <div class="bg-gray-950 p-3 rounded-lg border border-gray-800 text-left font-mono text-xs flex flex-col gap-1 text-gray-300">
+        <div><span class="text-gray-500">No. Tiket  :</span> <span id="modalTicketId" class="text-brand-400 font-bold">#MS-DSS-202705-004</span></div>
+        <div><span class="text-gray-500">Tujuan OPD :</span> <span id="modalOPD" class="text-white">DISNAKER KOTA MOJOKERTO</span></div>
+        <div><span class="text-gray-500">Zona Aksi  :</span> <span id="modalLocation" class="text-white">Alun-Alun Mojokerto</span></div>
+        <div><span class="text-gray-500">Intervensi :</span> <p id="modalAction" class="text-gray-400 italic mt-1 text-[11px] leading-relaxed"></p></div>
+      </div>
+
+      <button onclick="closeSuccessModal()" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-semibold py-2 rounded-lg transition text-sm">
+        Tutup & Selesai
+      </button>
+    </div>
+  </div>
+
+  <!-- MODAL: DAFTAR RIWAYAT DISPOSISI -->
+  <div id="historyModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div class="bg-cardbg border border-gray-800 rounded-xl p-6 max-w-2xl w-full shadow-2xl flex flex-col gap-4">
+      <div class="flex items-center justify-between border-b border-gray-800 pb-3">
+        <h3 class="text-lg font-bold text-white flex items-center gap-2">
+          <i data-lucide="history" class="text-purple-400"></i>
+          Riwayat Disposisi Kebijakan
+        </h3>
+        <button onclick="toggleHistoryModal()" class="text-gray-400 hover:text-white">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      
+      <div class="max-h-[350px] overflow-y-auto flex flex-col gap-3 pr-2" id="historyListContainer">
+        <!-- Terisi Dinamis -->
+      </div>
+
+      <div class="flex justify-end gap-2 border-t border-gray-800 pt-3 text-xs">
+        <button onclick="clearHistoryLog()" class="px-3 py-1.5 rounded border border-rose-500/30 text-rose-400 hover:bg-rose-500/10 transition">Kosongkan Riwayat</button>
+        <button onclick="toggleHistoryModal()" class="px-3 py-1.5 rounded bg-gray-800 hover:bg-gray-700 text-white transition">Tutup</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOGIKA OPERASIONAL SIMULATOR & STREAM VIDEO -->
+  <script src="js/app.js"></script>
+  <script src="js/ai-vision.js"></script>
+</body>
+</html>

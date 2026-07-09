@@ -1,0 +1,25 @@
+/* MSCHDS — Gaya kustom (styles.css) */
+    /* Desain Scrollbar Kustom */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0b0f19;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #374151;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #10b981;
+    }
+    .leaflet-popup-content-wrapper {
+      background: #161e2e !important;
+      color: #f3f4f6 !important;
+      border: 1px solid #374151;
+    }
+    .leaflet-popup-tip {
+      background: #161e2e !important;
+    }
+  
